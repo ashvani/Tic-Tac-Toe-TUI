@@ -9,18 +9,12 @@ use crossterm::{
 
 
 use::crossterm::event::{KeyModifiers, Event::Mouse, MouseEvent, MouseEventKind, MouseButton::Left};
-use std::time;
+use std::{thread, time};
 mod game;
 
 fn main() -> io::Result<()> {
 
     let mut game_status = game::Game::new();
-    let mut lines = String::new();
-        lines = lines + &format!("\r\n-----------------------------------");
-        lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
-        lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
-        lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
-
     terminal::enable_raw_mode()?;
     let mut stdout = stdout();
     stdout.execute(terminal::EnterAlternateScreen)?;
@@ -29,12 +23,24 @@ fn main() -> io::Result<()> {
         .execute(cursor::MoveTo(0, 0)).unwrap()
         .execute(cursor::SavePosition).unwrap()
         .execute(cursor::Hide).unwrap()
-        .execute(style::Print(game_status.pretty_print())).unwrap()
-        .execute(style::Print(lines)).unwrap()
         .execute(event::EnableMouseCapture)?;
 
     let mut index = 10;
     loop {
+        let mut lines = String::new();
+        lines = lines + &format!("\r\n-----------------------------------");
+        lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
+        lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
+        lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
+
+
+        stdout
+            .execute(cursor::RestorePosition).unwrap()
+            .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
+            .execute(style::Print(game_status.pretty_print())).unwrap()
+            .execute(style::Print(lines)).unwrap();
+
+
         if event::poll(time::Duration::from_millis(500))? {
             let input = event::read()?;
 
@@ -72,49 +78,48 @@ fn main() -> io::Result<()> {
                 modifiers: KeyModifiers::empty()}) {
                 index = 8;
             }
+            
 
             if game_status.is_valid_index(index) {
                 game_status.update_matrix(index);
-            } else {
-                continue;
-            }
+                match game_status.status() {
+                    0 => {
+                        stdout
+                            .execute(cursor::RestorePosition).unwrap()
+                            .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
+                            .execute(style::Print(game_status.pretty_print())).unwrap()
+                            .execute(style::Print(format!("\r\n\tCongratulations! {} won!", game_status.player()))).unwrap()
+                            .execute(cursor::Show).unwrap()
+                            .execute(event::DisableMouseCapture).unwrap();
 
-            stdout
-                .execute(cursor::RestorePosition).unwrap()
-                .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap();
-     
+                        break;
+                    }
+                    1 => {
 
-            match game_status.status() {
-                0 => {
+                        stdout
+                            .execute(cursor::RestorePosition).unwrap()
+                            .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
+                            .execute(style::Print(game_status.pretty_print())).unwrap()
+                            .execute(style::Print(format!("\r\n\tGame Drew!"))).unwrap()
+                            .execute(cursor::Show).unwrap()
+                            .execute(event::DisableMouseCapture).unwrap();
 
-                    stdout
-                        .execute(style::Print(game_status.pretty_print())).unwrap()
-                        .execute(style::Print(format!("\r\n\tCongratulations! {} won!", game_status.player()))).unwrap();
+                        break;
 
+                    }
+                    _ => {
+                    }
                 }
-                1 => {
-
-                    stdout
-                        .execute(style::Print(game_status.pretty_print())).unwrap()
-                        .execute(style::Print(format!("\r\n\tGame Drew!"))).unwrap();
-
-                }
-                _ => {
-                    stdout
-                        .execute(style::Print(game_status.pretty_print())).unwrap();
-                }
-            }
-
-            game_status.update_index();
+                game_status.update_index();
+            } 
         }
     }
 
-    stdout
-        .execute(cursor::Show).unwrap()
-        .execute(event::DisableMouseCapture).unwrap()
-        .execute(terminal::LeaveAlternateScreen)?;
-
+    thread::sleep(time::Duration::from_millis(7000));
     terminal::disable_raw_mode()?;
+    stdout
+       .execute(terminal::LeaveAlternateScreen)?;
+
     Ok(())
 }
 
