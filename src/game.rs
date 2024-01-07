@@ -4,7 +4,7 @@ pub struct Game {
     winning_row: Vec<i32>
 }
 
-use crossterm::style::Stylize;
+
 impl Game {
 
     pub fn player(&self) -> char {
@@ -21,47 +21,23 @@ impl Game {
         }
     }
 
-    fn printline(value: Vec<char>) -> String{
-        return format!("\t| {} | {} | {} |\n", value[0], value[1], value[2]);
-    }
 
-    pub fn print(&self) -> String {
+    pub fn pretty_print(&self) -> String {
 
-        let mut printlines = String::new();
-        printlines = printlines + &format!("\t{}-----------{}\n", "o", "o");
-        for i in 0..3 {
-            let row = &self.matrix[((i) * 3)..((i + 1) * 3)];
-            printlines = printlines + &Game::printline(row.to_vec()); 
-            if i < 2 {
-                printlines = printlines + &format!("\t ----------- \n");
-            } else {
-                printlines = printlines + &format!("\t{}-----------{}\n", "o", "o"); 
-            }
-        }
+        let pattern = format!("\
+    \r\n\to-----------o\
+    \r\n\t| {} | {} | {} |\
+    \r\n\t-------------\
+    \r\n\t| {} | {} | {} |\
+    \r\n\t-------------\
+    \r\n\t| {} | {} | {} |\
+    \r\n\to-----------o\n",
+         self.matrix[0], self.matrix[1], self.matrix[2], 
+         self.matrix[3], self.matrix[4], self.matrix[5],
+         self.matrix[6], self.matrix[7], self.matrix[8]);
 
-        printlines
-    }
+        pattern
 
-
-    pub fn pretty_print(&self) {
-
-        let boundry_line = format!("\t{}-----------{}", "o", "o");
-        print!("{}", boundry_line);
-        for i in 0..9 {
-            if i % 3 == 0 && i > 0{
-                print!("\n\t ----------- \n\t|");
-            } else if i % 3 == 0 {
-                print!("\n\t|");
-            }
-
-            if self.winning_row.iter().any(|&j| j == i) {
-                print!(" {} |", &self.matrix[i as usize].to_string().green());
-            } else {
-                print!(" {} |", &self.matrix[i as usize]);
-            }
-
-       }
-        println!("\n{}", boundry_line);
     }
 
     pub fn is_valid_index(&self, index: usize) -> bool {
