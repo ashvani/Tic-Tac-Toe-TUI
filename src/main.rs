@@ -9,7 +9,7 @@ use crossterm::{
 
 
 use::crossterm::event::{KeyModifiers, Event::Mouse, MouseEvent, MouseEventKind, MouseButton::Left};
-use std::{thread, time};
+use std::time;
 mod game;
 
 fn main() -> io::Result<()> {
@@ -18,27 +18,23 @@ fn main() -> io::Result<()> {
     terminal::enable_raw_mode()?;
     let mut stdout = stdout();
     stdout.execute(terminal::EnterAlternateScreen)?;
+    let mut lines = String::new();
+    lines = lines + &format!("\r\n-----------------------------------");
+    lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
+    lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
+    lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
+
     stdout
         .execute(terminal::SetTitle("Tic Tac Toe")).unwrap()
         .execute(cursor::MoveTo(0, 0)).unwrap()
         .execute(cursor::SavePosition).unwrap()
         .execute(cursor::Hide).unwrap()
+        .execute(style::Print(game_status.pretty_print())).unwrap()
+        .execute(style::Print(lines)).unwrap()
         .execute(event::EnableMouseCapture)?;
 
     let mut index = 10;
     loop {
-        let mut lines = String::new();
-        lines = lines + &format!("\r\n-----------------------------------");
-        lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
-        lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
-        lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
-
-
-        stdout
-            .execute(cursor::RestorePosition).unwrap()
-            .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
-            .execute(style::Print(game_status.pretty_print())).unwrap()
-            .execute(style::Print(lines)).unwrap();
 
 
         if event::poll(time::Duration::from_millis(500))? {
@@ -92,7 +88,6 @@ fn main() -> io::Result<()> {
                             .execute(cursor::Show).unwrap()
                             .execute(event::DisableMouseCapture).unwrap();
 
-                        break;
                     }
                     1 => {
 
@@ -104,18 +99,28 @@ fn main() -> io::Result<()> {
                             .execute(cursor::Show).unwrap()
                             .execute(event::DisableMouseCapture).unwrap();
 
-                        break;
 
                     }
                     _ => {
-                    }
+
+                        game_status.update_index();
+                        let mut lines = String::new();
+                        lines = lines + &format!("\r\n-----------------------------------");
+                        lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
+                        lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
+                        lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
+
+                        stdout
+                            .execute(cursor::RestorePosition).unwrap()
+                            .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
+                            .execute(style::Print(game_status.pretty_print())).unwrap()
+                            .execute(style::Print(lines)).unwrap();
                 }
-                game_status.update_index();
+                }
             } 
         }
     }
 
-    thread::sleep(time::Duration::from_millis(7000));
     terminal::disable_raw_mode()?;
     stdout
        .execute(terminal::LeaveAlternateScreen)?;
