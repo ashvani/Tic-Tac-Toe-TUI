@@ -83,8 +83,9 @@ fn main() -> io::Result<()> {
                         stdout
                             .execute(cursor::RestorePosition).unwrap()
                             .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
-                            .execute(style::Print(game_status.pretty_print())).unwrap()
+                            .execute(style::Print(game_status.pretty_print_win())).unwrap()
                             .execute(style::Print(format!("\r\n\tCongratulations! {} won!", game_status.player()))).unwrap()
+                            .execute(style::Print(format!("\r\n\tPresss Esc to exit!!!"))).unwrap()
                             .execute(cursor::Show).unwrap()
                             .execute(event::DisableMouseCapture).unwrap();
 
@@ -96,6 +97,7 @@ fn main() -> io::Result<()> {
                             .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
                             .execute(style::Print(game_status.pretty_print())).unwrap()
                             .execute(style::Print(format!("\r\n\tGame Drew!"))).unwrap()
+                            .execute(style::Print(format!("\r\n\tPresss Esc to exit!!!"))).unwrap()
                             .execute(cursor::Show).unwrap()
                             .execute(event::DisableMouseCapture).unwrap();
 
@@ -115,7 +117,7 @@ fn main() -> io::Result<()> {
                             .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
                             .execute(style::Print(game_status.pretty_print())).unwrap()
                             .execute(style::Print(lines)).unwrap();
-                }
+                    }
                 }
             } 
         }

@@ -4,6 +4,7 @@ pub struct Game {
     winning_row: Vec<i32>
 }
 
+use crossterm::style::Stylize;
 
 impl Game {
 
@@ -54,6 +55,26 @@ impl Game {
 
     pub fn update_index(&mut self) {
         self.player = if self.player == 'X' {'O'} else {'X'};
+    }
+
+    pub fn pretty_print_win(&self) -> String {
+
+        let mut boundry_line = format!("\r\n\t{}-----------{}", "o", "o");
+        for i in 0..9 {
+            if i % 3 == 0 && i > 0{
+                boundry_line = boundry_line + &format!("\r\n\t-------------\r\n\t|");
+            } else if i % 3 == 0 {
+                boundry_line = boundry_line + &format!("\r\n\t|");
+            }
+
+            if self.winning_row.iter().any(|&j| j == i) {
+                boundry_line = boundry_line + &format!(" {} |", &self.matrix[i as usize].to_string().green());
+            } else {
+                boundry_line = boundry_line + &format!(" {} |", &self.matrix[i as usize]);
+            }
+
+       }
+        boundry_line + &format!("\r\n\t{}-----------{}\r\n", "o", "o")
     }
 
 
