@@ -19,7 +19,7 @@ fn main() -> io::Result<()> {
     let mut stdout = stdout();
     stdout.execute(terminal::EnterAlternateScreen)?;
     let mut lines = String::new();
-    lines = lines + &format!("\r\n-----------------------------------");
+    lines = lines + &format!("\r\n\t---------------------------");
     lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
     lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
     lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
@@ -84,6 +84,7 @@ fn main() -> io::Result<()> {
                             .execute(cursor::RestorePosition).unwrap()
                             .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
                             .execute(style::Print(game_status.pretty_print_win())).unwrap()
+                            .execute(style::Print(format!("\r\n\t---------------------------"))).unwrap()
                             .execute(style::Print(format!("\r\n\tCongratulations! {} won!", game_status.player()))).unwrap()
                             .execute(style::Print(format!("\r\n\tPresss Esc to exit!!!"))).unwrap()
                             .execute(cursor::Show).unwrap()
@@ -96,6 +97,7 @@ fn main() -> io::Result<()> {
                             .execute(cursor::RestorePosition).unwrap()
                             .execute(terminal::Clear(terminal::ClearType::FromCursorDown)).unwrap()
                             .execute(style::Print(game_status.pretty_print())).unwrap()
+                            .execute(style::Print(format!("\r\n\t---------------------------"))).unwrap()
                             .execute(style::Print(format!("\r\n\tGame Drew!"))).unwrap()
                             .execute(style::Print(format!("\r\n\tPresss Esc to exit!!!"))).unwrap()
                             .execute(cursor::Show).unwrap()
@@ -107,7 +109,7 @@ fn main() -> io::Result<()> {
 
                         game_status.update_index();
                         let mut lines = String::new();
-                        lines = lines + &format!("\r\n-----------------------------------");
+                        lines = lines + &format!("\r\n\t---------------------------");
                         lines = lines + &format!("\r\n\t{}'s turn", game_status.player());
                         lines = lines + &format!("\r\n\tClick in any of the cells (1 to 9)!!!");
                         lines = lines + &format!("\r\n\tPresss Esc anytime to exit!!!");
