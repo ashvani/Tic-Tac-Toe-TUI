@@ -12,6 +12,13 @@ use::crossterm::event::{KeyModifiers, Event::Mouse, MouseEvent, MouseEventKind, 
 use std::time;
 mod game;
 
+
+fn get_mouse_event(column: u16, row: u16) -> event::Event {
+    Mouse(MouseEvent{kind: MouseEventKind::Up(Left), 
+        column, row, modifiers: KeyModifiers::empty()})
+}
+
+
 fn main() -> io::Result<()> {
 
     let mut game_status = game::Game::new();
@@ -45,33 +52,42 @@ fn main() -> io::Result<()> {
             }
 
                  
-            if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 10, row: 2, 
-                modifiers: KeyModifiers::empty()}) {
+            if input == get_mouse_event(9, 2) || 
+                input == get_mouse_event(10, 2) || 
+                input == get_mouse_event(11, 2) {
                 index = 0;
 
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 14, row: 2, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(13, 2) || 
+                input == get_mouse_event(14, 2) || 
+                input == get_mouse_event(15, 2) {
                 index = 1;
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 18, row: 2, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(17, 2) || 
+                input == get_mouse_event(18, 2) || 
+                input == get_mouse_event(19, 2) {
                 index = 2;
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 10, row: 4, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(9, 4) || 
+                input == get_mouse_event(10, 4) || 
+                input == get_mouse_event(11, 4) {
                 index = 3;
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 14, row: 4, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(13, 4) || 
+                input == get_mouse_event(14, 4) || 
+                input == get_mouse_event(15, 4) {
                 index = 4;
-            }else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 18, row: 4, 
-                modifiers: KeyModifiers::empty()}) {
+            }else if input == get_mouse_event(17, 4) || 
+                input == get_mouse_event(18, 4) || 
+                input == get_mouse_event(19, 4) {
                 index = 5;
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 10, row: 6, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(9, 6) || 
+                input == get_mouse_event(10, 6) || 
+                input == get_mouse_event(11, 6) {
                 index = 6;
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 14, row: 6, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(13, 6) || 
+                input == get_mouse_event(14, 6) || 
+                input == get_mouse_event(15, 6) {
                 index = 7;
-            } else if input == Mouse(MouseEvent{kind: MouseEventKind::Up(Left), column: 18, row: 6, 
-                modifiers: KeyModifiers::empty()}) {
+            } else if input == get_mouse_event(17, 6) || 
+                input == get_mouse_event(18, 6) || 
+                input == get_mouse_event(19, 6) {
                 index = 8;
             }
             
